@@ -2,7 +2,6 @@
   "name": "testing",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -10,6 +9,24 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@nextui-org/aria-utils": "workspace:*",
+    "@nextui-org/badge": "workspace:*",
+    "@nextui-org/code": "workspace:*",
+    "@nextui-org/divider": "workspace:*",
+    "@nextui-org/kbd": "workspace:*",
+    "@nextui-org/listbox": "workspace:*",
+    "@nextui-org/react": "workspace:*",
+    "@nextui-org/shared-icons": "workspace:*",
+    "@nextui-org/shared-utils": "workspace:*",
+    "@nextui-org/skeleton": "workspace:*",
+    "@nextui-org/spacer": "workspace:*",
+    "@nextui-org/spinner": "workspace:*",
+    "@nextui-org/theme": "workspace:*",
+    "@nextui-org/use-clipboard": "workspace:*",
+    "@nextui-org/use-infinite-scroll": "workspace:*",
+    "@nextui-org/use-is-mobile": "workspace:*",
+    "@nextui-org/system": "workspace:*",
+    "framer-motion": "^11.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
