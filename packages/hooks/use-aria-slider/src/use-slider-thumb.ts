@@ -179,8 +179,8 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
       ) {
         const prevDraggedIndex = realTimeThumbDraggingIndex.current;
 
-        setThumbDragging(prevDraggedIndex, false);
         setThumbDragging(controlThumbIndex, true);
+        setThumbDragging(prevDraggedIndex, false);
 
         realTimeThumbDraggingIndex.current = controlThumbIndex;
       }

@@ -81,8 +81,8 @@ export function useSlider<T extends number | number[]>(
       ) {
         const prevDraggedIndex = realTimeTrackDraggingIndex.current;
 
-        state.setThumbDragging(prevDraggedIndex, false);
         state.setThumbDragging(controlIndex, true);
+        state.setThumbDragging(prevDraggedIndex, false);
 
         realTimeTrackDraggingIndex.current = controlIndex;
       }
