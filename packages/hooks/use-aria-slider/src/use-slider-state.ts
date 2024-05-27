@@ -23,6 +23,22 @@ export interface SliderState {
   setThumbValue(index: number, value: number): void;
 
   /**
+   * Sets the thumb value to minimal possible value
+   * If there are several thumbs in the slider (range slider) and the thumb with the passed index rests against another thumb,
+   * then this other thumb will also be set to the minimum value
+   * @param index
+   */
+  setThumbToMinValue(index: number): void;
+
+  /**
+   * Sets the thumb value to minimal possible value
+   * If there are several thumbs in the slider (range slider) and the thumb with the passed index rests against another thumb,
+   * then this other thumb will also be set to the maximum value
+   * @param index
+   */
+  setThumbToMaxValue(index: number): void;
+
+  /**
    * Sets value for the specified thumb by percent offset (between 0 and 1).
    * @param index
    * @param percent
@@ -238,7 +254,7 @@ export function useSliderState<T extends number | number[]>(
     }
 
     const stackedThumbs = getStackedThumbs(values);
-    const isThumbsStacked = stackedThumbs.length !== 0;
+    const isThumbsStuck = stackedThumbs.length !== 0;
     const stackedThumbIndex = stackedThumbs.filter(
       (i) => i !== (focusedIndexRef.current ?? controlIndex),
     )[0];
@@ -248,10 +264,11 @@ export function useSliderState<T extends number | number[]>(
 
     const isPossibleUpdateValue = value >= indexMinValue && value <= indexMaxValue;
 
-    if (isThumbsStacked && !isPossibleUpdateValue) {
+    if (isThumbsStuck && !isPossibleUpdateValue) {
       focusedIndexRef.current = stackedThumbIndex;
 
       controlIndex = stackedThumbIndex;
+      setFocusedIndex(controlIndex);
     }
 
     // Check it again in case the thumbs are stuck and the control index has changed
@@ -270,13 +287,6 @@ export function useSliderState<T extends number | number[]>(
     // Preventing re-rendering if the new values are equal to the current ones
     if (!isValuesEqual(newValues, values)) {
       setValues(newValues);
-
-      if (isThumbsStacked && controlIndex !== index) {
-        setFocusedIndex(controlIndex);
-
-        updateDragging(controlIndex, true);
-        updateDragging(index, false);
-      }
     }
   }
 
@@ -329,18 +339,50 @@ export function useSliderState<T extends number | number[]>(
     updateValue(index, snapValueToStep(values[index] - s, minValue, maxValue, step));
   }
 
+  function setThumbToMaxValue(index: number) {
+    for (let i = index; i < values.length; i++) {
+      const thumbMaxValue = getThumbMaxValue(i);
+
+      if (thumbMaxValue === maxValue) {
+        updateValue(i, thumbMaxValue);
+
+        return;
+      }
+
+      updateValue(i, thumbMaxValue);
+    }
+  }
+
+  function setThumbToMinValue(index: number) {
+    for (let i = index; i >= 0; i--) {
+      const thumbMinValue = getThumbMinValue(i);
+
+      if (thumbMinValue === minValue) {
+        updateValue(i, thumbMinValue);
+
+        return;
+      }
+
+      updateValue(i, thumbMinValue);
+    }
+  }
+
+  function setFocusedThumb(index: number | undefined) {
+    focusedIndexRef.current = index;
+    setFocusedIndex(focusedIndexRef.current);
+  }
+
   return {
     values: values,
     getThumbValue: (index: number) => values[index],
     setThumbValue: updateValue,
+    setThumbToMinValue,
+    setThumbToMaxValue,
     setThumbPercent,
     isThumbDragging: (index: number) => isDraggings[index],
     setThumbDragging: updateDragging,
     focusedThumb: focusedIndex,
-    setFocusedThumb: (index: number | undefined) => {
-      focusedIndexRef.current = index;
-      setFocusedIndex(focusedIndexRef.current);
-    },
+    setFocusedThumb,
     getThumbPercent: (index: number) => getValuePercent(values[index]),
     getValuePercent,
     getThumbValueLabel: (index: number) => getFormattedValue(values[index]),

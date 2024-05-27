@@ -75,6 +75,18 @@ export function useSlider<T extends number | number[]>(
         currentPosition.current = state.getThumbPercent(controlIndex) * size;
       }
 
+      if (
+        realTimeTrackDraggingIndex.current !== null &&
+        realTimeTrackDraggingIndex.current !== controlIndex
+      ) {
+        const prevDraggedIndex = realTimeTrackDraggingIndex.current;
+
+        state.setThumbDragging(prevDraggedIndex, false);
+        state.setThumbDragging(controlIndex, true);
+
+        realTimeTrackDraggingIndex.current = controlIndex;
+      }
+
       let delta = isVertical ? deltaY : deltaX;
 
       if (isVertical || reverseX) {
@@ -92,7 +104,7 @@ export function useSlider<T extends number | number[]>(
     onMoveEnd() {
       const controlIndex = state.focusedThumb ?? realTimeTrackDraggingIndex.current;
 
-      if (controlIndex != undefined || controlIndex !== null) {
+      if (controlIndex !== undefined && controlIndex !== null) {
         state.setThumbDragging(controlIndex, false);
         realTimeTrackDraggingIndex.current = null;
         state.setFocusedThumb(undefined);

@@ -1,7 +1,7 @@
 {
   "name": "@nextui-org/use-aria-slider",
   "version": "2.3.6",
-  "description": "Provides the slider behavior",
+  "description": "Provides the slider behavior. Based on react-aria slider hook and state",
   "keywords": [
     "use-aria-slider"
   ],
@@ -33,6 +33,10 @@
     "prepack": "clean-package",
     "postpack": "clean-package restore"
   },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
   "dependencies": {
     "@react-aria/focus": "^3.17.1",
     "@react-aria/i18n": "3.10.2",
@@ -40,10 +44,6 @@
     "@react-aria/label": "^3.7.8",
     "@react-stately/utils": "^3.10.1",
     "@react-types/slider": "^3.7.3"
-  },
-  "peerDependencies": {
-    "react": ">=18",
-    "react-dom": ">=18"
   },
   "devDependencies": {
     "clean-package": "2.2.0",

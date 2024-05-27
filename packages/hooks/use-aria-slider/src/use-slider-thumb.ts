@@ -104,11 +104,10 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
   let {keyboardProps} = useKeyboard({
     onKeyDown(e) {
       let {
-        getThumbMaxValue,
-        getThumbMinValue,
+        setThumbToMaxValue,
+        setThumbToMinValue,
         decrementThumb,
         incrementThumb,
-        setThumbValue,
         setThumbDragging,
         pageSize,
       } = state;
@@ -133,18 +132,23 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
           decrementThumb(index, pageSize);
           break;
         case "Home":
-          setThumbValue(index, getThumbMinValue(index));
+          setThumbToMinValue(index);
           break;
         case "End":
-          setThumbValue(index, getThumbMaxValue(index));
+          setThumbToMaxValue(index);
           break;
       }
+      setThumbDragging(state.focusedThumb ?? index, false);
     },
   });
+
+  const realTimeThumbDraggingIndex = useRef<number | null>(null);
 
   let {moveProps} = useMove({
     onMoveStart() {
       currentPosition.current = null;
+
+      realTimeThumbDraggingIndex.current = index;
       state.setThumbDragging(index, true);
     },
     onMove({deltaX, deltaY, pointerType, shiftKey}) {
@@ -152,6 +156,7 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
         focusedThumb,
         getThumbPercent,
         setThumbPercent,
+        setThumbDragging,
         decrementThumb,
         incrementThumb,
         step,
@@ -166,10 +171,22 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
         currentPosition.current = getThumbPercent(controlThumbIndex) * size;
       }
 
-      const isValueDecreased = (deltaX > 0 && reverseX) || (deltaX < 0 && !reverseX) || deltaY > 0;
+      const isValueDecreasing = (deltaX > 0 && reverseX) || (deltaX < 0 && !reverseX) || deltaY > 0;
+
+      if (
+        realTimeThumbDraggingIndex.current !== null &&
+        realTimeThumbDraggingIndex.current !== controlThumbIndex
+      ) {
+        const prevDraggedIndex = realTimeThumbDraggingIndex.current;
+
+        setThumbDragging(prevDraggedIndex, false);
+        setThumbDragging(controlThumbIndex, true);
+
+        realTimeThumbDraggingIndex.current = controlThumbIndex;
+      }
 
       if (pointerType === "keyboard") {
-        isValueDecreased
+        isValueDecreasing
           ? decrementThumb(controlThumbIndex, shiftKey ? pageSize : step)
           : incrementThumb(controlThumbIndex, shiftKey ? pageSize : step);
       } else {
@@ -184,9 +201,11 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
       }
     },
     onMoveEnd({pointerType}) {
-      const {focusedThumb} = state;
+      if (realTimeThumbDraggingIndex.current !== null) {
+        state.setThumbDragging(realTimeThumbDraggingIndex.current, false);
 
-      state.setThumbDragging(focusedThumb ?? index, false);
+        realTimeThumbDraggingIndex.current = null;
+      }
 
       if (pointerType !== "keyboard") state.setFocusedThumb(undefined);
     },
@@ -207,7 +226,6 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
   let onDown = (id?: number) => {
     focusInput();
     currentPointer.current = id;
-    state.setThumbDragging(index, true);
 
     addGlobalListener(window, "mouseup", onUp, false);
     addGlobalListener(window, "touchend", onUp, false);
@@ -220,7 +238,12 @@ export function useSliderThumb(opts: AriaSliderThumbOptions, state: SliderState)
     if (id === currentPointer.current) {
       focusInput();
 
-      state.setThumbDragging(state.focusedThumb ?? index, false);
+      if (realTimeThumbDraggingIndex.current !== null) {
+        state.setThumbDragging(realTimeThumbDraggingIndex.current, false);
+
+        realTimeThumbDraggingIndex.current = null;
+      }
+
       removeGlobalListener(window, "mouseup", onUp, false);
       removeGlobalListener(window, "touchend", onUp, false);
       removeGlobalListener(window, "pointerup", onUp, false);
