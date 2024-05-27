@@ -1,17 +1,20 @@
 import type {SliderVariantProps} from "@nextui-org/theme";
 
 import {HTMLNextUIProps, PropGetter} from "@nextui-org/system";
-import {useSliderThumb as useAriaSliderThumb} from "@react-aria/slider";
 import {ReactRef, useDOMRef} from "@nextui-org/react-utils";
 import {RefObject, useRef} from "react";
 import {AriaSliderThumbProps} from "@react-aria/slider";
-import {SliderState} from "@react-stately/slider";
 import {useHover, usePress} from "@react-aria/interactions";
 import {useFocusRing} from "@react-aria/focus";
 import {mergeProps} from "@react-aria/utils";
 import {dataAttr} from "@nextui-org/shared-utils";
 import {TooltipProps} from "@nextui-org/tooltip";
 import {useNumberFormatter} from "@react-aria/i18n";
+// import {SliderState} from "@react-stately/slider";
+// import {useSliderThumb as useAriaSliderThumb} from "@react-aria/slider";
+
+import {useSliderThumb as useAriaSliderThumb} from "../../../hooks/use-aria-slider/src/index";
+import {SliderState} from "../../../hooks/use-aria-slider/src/index";
 
 import {UseSliderProps} from "./use-slider";
 

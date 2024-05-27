@@ -1,13 +1,24 @@
-import { useState } from 'react'
+import {Slider} from "@nextui-org/react";
 
-import './App.css'
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <h1 className='text-sm'>Test</h1>
-  )
+    <div className="flex flex-row  max-w-md h-[348px] gap-6 w-full min-w-[600px]">
+      <Slider
+        hideThumb
+        showTooltip
+        className="max-w-md"
+        defaultValue={[10, 600]}
+        formatOptions={{style: "currency", currency: "USD"}}
+        label="Price Range"
+        maxValue={1000}
+        minValue={0}
+        orientation="horizontal"
+        step={100}
+      />
+    </div>
+  );
 }
 
-export default App
+export default App;

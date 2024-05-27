@@ -1,0 +1,19 @@
+import {SliderState} from "./use-slider-state";
+
+interface SliderData {
+  id: string;
+  "aria-describedby"?: string;
+  "aria-details"?: string;
+}
+
+export const sliderData = new WeakMap<SliderState, SliderData>();
+
+export function getSliderThumbId(state: SliderState, index: number) {
+  let data = sliderData.get(state);
+
+  if (!data) {
+    throw new Error("Unknown slider state");
+  }
+
+  return `${data.id}-${index}`;
+}

@@ -3,15 +3,21 @@ import type {SliderSlots, SliderVariantProps, SlotsToClasses} from "@nextui-org/
 import {DOMAttributes, HTMLNextUIProps, mapPropsVariants, PropGetter} from "@nextui-org/system";
 import {slider} from "@nextui-org/theme";
 import {ReactRef, useDOMRef, filterDOMProps} from "@nextui-org/react-utils";
-import {useSliderState} from "@react-stately/slider";
 import {ReactNode, useCallback, useMemo, useRef} from "react";
 import {useNumberFormatter, useLocale} from "@react-aria/i18n";
 import {mergeProps} from "@react-aria/utils";
-import {AriaSliderProps, useSlider as useAriaSlider} from "@react-aria/slider";
 import {clsx, objectToDeps} from "@nextui-org/shared-utils";
 import {TooltipProps} from "@nextui-org/tooltip";
 import {useHover} from "@react-aria/interactions";
 import {ValueBase} from "@react-types/shared";
+// import {useSliderState} from "@react-stately/slider";
+// import {AriaSliderProps, useSlider as useAriaSlider} from "@react-aria/slider";
+
+import {useSliderState} from "../../../hooks/use-aria-slider/src/index";
+import {
+  AriaSliderProps,
+  useSlider as useAriaSlider,
+} from "../../../hooks/use-aria-slider/src/index";
 
 import {SliderThumbProps} from "./slider-thumb";
 
@@ -219,6 +225,7 @@ export function useSlider(originalProps: UseSliderProps) {
     state,
     trackRef,
   );
+
   const {isHovered, hoverProps} = useHover({isDisabled: originalProps.isDisabled});
 
   const baseStyles = clsx(classNames?.base, className);
